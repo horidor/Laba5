@@ -1,6 +1,6 @@
 ﻿  main.cpp
-C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(185,23): warning C4018: '<': signed/unsigned mismatch
-C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(231,14): warning C4018: '<': signed/unsigned mismatch
-C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(260,19): warning C4018: '>=': signed/unsigned mismatch
-C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(295,10): warning C4101: 'flag': unreferenced local variable
+C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(271,23): warning C4018: '<': signed/unsigned mismatch
+C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(317,14): warning C4018: '<': signed/unsigned mismatch
+C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(346,19): warning C4018: '>=': signed/unsigned mismatch
+C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(381,10): warning C4101: 'flag': unreferenced local variable
   Laba5.vcxproj -> C:\labs\Laboratorna5OP\Laba5\Debug\Laba5.exe

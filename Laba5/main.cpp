@@ -34,6 +34,7 @@ private:
     Node* left;
     Node* right;
     std::string inside;
+    bool flag;
 
 public:
     Node()
@@ -42,6 +43,7 @@ public:
         right = nullptr;
         inside = '\0';
         std::cout << "i'm not here!" << std::endl;
+        flag = false;
     }
     Node(std::string ins)
     {
@@ -49,6 +51,7 @@ public:
         right = nullptr;
         inside = ins;
         std::cout << "HERE I.. am?" << std::endl;
+        flag = false;
     }
     Node(Node* l, Node* r, std::string ins = "\0")
     {
@@ -56,89 +59,190 @@ public:
         right = r;
         inside = ins;
         std::cout << "HERE I AM" << std::endl;
+        flag = false;
     }
 
     Node* get_left(){ return left; }
     Node* get_right() { return right; }
-    virtual std::string get_inside() { return inside; }
+    std::string get_inside() { return inside; }
+    bool get_flag(){ return flag; }
 
     void set_left(Node* l) { left = l; }
     void set_right(Node* r) { right = r; }
-    virtual void set_inside(std::string ins) { inside = ins; }
-
-};
-
-class Node_d : public Node
-{
-private:
-    double inside;
-
-public:
-    Node_d()
-    {
-        double inside = 0;
-        std::cout << "i'm not here! d" << std::endl;
-    }
-    Node_d(double ins, Node* l=nullptr, Node* r=nullptr)
-        :Node(l, r)
-    {
-        inside = ins;
-        std::cout << "HERE I AM DOUBLED." << std::endl;
-    }
-
-    virtual void set_inside(double s) { inside = s; }
-    virtual double get_inside() const { return inside; }
-
-};
-
-class Node_c : public Node
-{
-private:
-    char inside;
-
-public:
-    Node_c()
-    {
-        inside = '\0';
-        std::cout << "i'm not here! c" << std::endl;
-    }
-
-    Node_c(char ins, Node* l=nullptr, Node* r=nullptr)
-        : Node(l, r)
-    {
-        inside = ins;
-        std::cout << "HERE I AM CHARRED." << std::endl;
-    }
-    
-    virtual void set_inside(char s) { inside = s; }
-    virtual char get_inside() const { return inside; }
+    void set_inside(std::string ins) { inside = ins; }
+    void set_flag(bool f) { flag = f; }
 
 };
 
 class Constructor
 {
 private:
-    Node_c root;
+    Node* root;
+
+    Node* add_new(std::string ins)
+    {
+        Node* temp = new Node(ins);
+        return temp;
+    }
+
+    Node* construct_tree(std::string ins, Node* nova)
+    {
+        Node* temp;
+        if (nova == nullptr)
+        {
+            temp = add_new(ins);
+        }
+        else
+        {
+            if ((ins.length() < 2) and (isdigit(ins[0]) == 0))
+            {
+                if (nova->get_right() == nullptr)
+                {
+                    nova->set_right(construct_tree(ins, nova->get_right()));
+                }
+                else if (nova->get_right()->get_flag() == false)
+                {
+                    nova->set_right(construct_tree(ins, nova->get_right()));
+                }
+                else if (nova->get_right()->get_flag() == true)
+                {
+                    nova->set_left(construct_tree(ins, nova->get_left()));
+                }
+            }
+            else
+            {
+                if (nova->get_right() == nullptr)
+                {
+                    nova->set_right(construct_tree(ins, nova->get_right()));
+                }
+                else if (((nova->get_right()->get_inside()).length() < 2) and (isdigit((nova->get_right()->get_inside())[0]) == 0) and ((nova->get_right()->get_flag()) == false))
+                {
+                    nova->set_right(construct_tree(ins, nova->get_right()));
+                }
+                else
+                {
+                    nova->set_left(construct_tree(ins, nova->get_left()));
+                    nova->set_flag(true);
+                }
+            }
+            temp = nova;
+        }
+        return temp;
+    }
 public:
-    Constructor(Node_c r)
+    Constructor()
+    {
+        root = nullptr;
+    }
+   
+
+    Node* construct(std::string* out, int n)
+    {
+        for (int i = n - 1; i >= 0; i--)
+        {
+            root = construct_tree(out[i], root);
+        }
+        return root;
+    }
+
+    
+
+    void output_tree(Node* output)
+    {
+        if (output != nullptr)
+        {
+            std::cout << output->get_inside();
+            std::cout << " ";
+            output_tree(output->get_right());
+            output_tree(output->get_left());
+        }
+    }
+
+    Node* get_root() { return root; }
+};
+
+class Calculation
+{
+private:
+    Node* root;
+    double result;
+
+    double calculate(Node *n)
+    {
+        double a, b;
+        
+    }
+
+public:
+    Calculation(Node* r)
     {
         root = r;
+        result = calculate(root);
     }
 
-    Node_c construct(std::string* out, int n)
+    double get_calculation()
     {
-        Node* node1;
-        Node_c node_c1;
-        node1 = &node_c1;
-        Node* node2;
-        Node_c node_c2;
-        node2 = &node2;
-
+        return result;
     }
-
-    Node* construct_recurs(std::string* out, int n, Node* upper)
-
 };
+
+
+//class Node //допоміжний класс дерева
+//{
+//private:
+//    int inside;
+//    Node* left;
+//    Node* right;
+//public:
+//    Node()
+//    {
+//        inside = 0;
+//        left = NULL;
+//        right = NULL;
+//    }
+//    Node* new_node(int ins) //створення нової ноди
+//    {
+//        Node* temp = new Node;
+//        temp->inside = ins;
+//        temp->left = temp->right = NULL;
+//        return temp;
+//    }
+//
+//    Node* add_node(int ins, Node* tree) //додавання нової ноди
+//    {
+//        Node* temp;
+//        if (tree == NULL)
+//        {
+//            temp = new_node(ins);
+//        }
+//        else
+//        {
+//            if (ins < tree->inside)
+//            {
+//                tree->left = add_node(ins, tree->left);
+//            }
+//            else
+//            {
+//                tree->right = add_node(ins, tree->right);
+//            }
+//            temp = tree;
+//        }
+//        return temp;
+//    }
+//
+//    Node* get_left() { return left; } //геттери
+//    Node* get_right() { return right; }
+//    int get_inside() { return inside; }
+//
+//    ~Node() //рекурсивний деструктор
+//    {
+//        if (this != NULL)
+//        {
+//            delete right;
+//            delete left;
+//        }
+//    }
+//};
 
 std::string console_interp(int, char* []);
 int num_of_elements(std::string);
@@ -151,20 +255,20 @@ int pow(int, int);
 int main(int _argc, char* _argv[])
 {
     ////std::string infix = console_interp(_argc, _argv);
-    //std::string infix;                            //debug testing
-    //getline(std::cin, infix);
+    std::string infix;                            //debug testing
+    getline(std::cin, infix);
 
-    //int n = num_of_elements(infix);
-    //std::string* infix_alg = divide_into_elements(infix, n);
-    //std::string* out_temp = sort_station(infix_alg, &n);
+    int n = num_of_elements(infix);
+    std::string* infix_alg = divide_into_elements(infix, n);
+    std::string* out_temp = sort_station(infix_alg, &n);
 
-    //std::string* out = new std::string[n];
-    //out = out_temp;
-    //for (int i = 0; i < n; i++)
-    //{
-    //    std::cout << out[i] << " ";
-    //}
-    //std::cout << std::endl;
+    std::string* out = new std::string[n];
+    out = out_temp;
+    for (int i = 0; i < n; i++)
+    {
+        std::cout << out[i] << " ";
+    }
+    std::cout << std::endl;
 
     //int sum = get_through(out, n);
     //std::cout << "Result: " << sum << std::endl;
@@ -173,6 +277,10 @@ int main(int _argc, char* _argv[])
     //Constructor a(b);
     //std::string out[2] = { "heh" , "mda" };
     //a.construct(out, 7);
+
+    Constructor constr;
+    constr.construct(out, n);
+    constr.output_tree(constr.get_root());
 }
 
 std::string console_interp(int argc, char* argv[]) //interpreting console input
