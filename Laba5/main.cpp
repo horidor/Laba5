@@ -235,15 +235,23 @@ public:
     }
 };
 
+class Parser
+{
+private:
+
+public:
+
+};
 class FileRead
 {
 private:
     std::fstream pFile;
     std::string buffer;
     std::vector<std::string> input_from_file;
+    std::vector<std::pair< std::string, std::string>> pairs;
     int elnum;
 
-    void parse()
+    void normalize()
     {
         for (int i = 0; i < elnum-1; i++)
         {
@@ -253,6 +261,13 @@ private:
             input_from_file[i] = buffer;
         }
         input_from_file[elnum - 1].erase(input_from_file[elnum - 1].length() - 1);
+        std::string a, b;
+        for (int i = 0; i < elnum - 1; i++)
+        {
+            a = input_from_file[i].substr(0, input_from_file[i].find(' '));
+            b = input_from_file[i].substr(input_from_file[i].find(' ') + 1);
+            pairs.push_back(std::make_pair(a, b));
+        }
     }
 public:
     FileRead(std::string name)
@@ -267,7 +282,7 @@ public:
         }
         pFile.close();
         elnum = input_from_file.size();
-        parse();
+        normalize();
     }
 
     void output()
@@ -276,11 +291,16 @@ public:
         {
             std::cout << input_from_file[i] << std::endl;
         }
+        for (int i = 0; i < elnum-1; i++)
+        {
+            std::cout << pairs[i].first << " " << pairs[i].second << std::endl;
+        }
     }
     
 
 
     std::string get_statement() { return input_from_file[elnum - 1]; }
+    std::vector<std::pair<std::string, std::string>> get_pairs() { return pairs; }
 
 
 
@@ -347,6 +367,7 @@ public:
 std::string console_interp(int, char* []);
 int num_of_elements(std::string);
 std::string* divide_into_elements(std::string, int);
+std::string* replace_variables(std::string*, std::vector<std::pair<std::string, std::string>>, int);
 std::string* sort_station(std::string*, int*);
 char priority(char, char);
 //int get_through(std::string*, int);
@@ -362,10 +383,19 @@ int main(int _argc, char* _argv[])
     FileRead fromfile("test.txt");
     fromfile.output();
     infix = fromfile.get_statement();
+    std::cout << isalpha('b') << std::endl;
 
     int n = num_of_elements(infix);
     std::string* infix_alg = divide_into_elements(infix, n);
+    infix_alg = replace_variables(infix_alg, fromfile.get_pairs(), n);
+    for (int i = 0; i < n; i++)
+    {
+        std::cout << infix_alg[i] << std::endl;
+    }
+
     std::string* out_temp = sort_station(infix_alg, &n);
+
+    
 
     std::string* out = new std::string[n];
     out = out_temp;
@@ -472,20 +502,20 @@ std::string* divide_into_elements(std::string D, int n) //dividing into operator
     }
     while (j < D.length())
     {
-        if (((isdigit(D[j]) == 0) and (isalpha(D[j]) == 0)) and (k - j == 0) and (isdigit(D[j + 1]) != 0))
+        if (((isdigit(D[j]) == 0) and ((isalpha(D[j])) == 0)) and (k - j == 0) and ((isdigit(D[j + 1]) != 0) or (isalpha(D[j+1]) != 0)))
         {
             L[i] = D.substr(j, 1);
             k++;
             i++;
         }
-        else if ((((isdigit(D[j]) == 0) and (isalpha(D[j]))==0)) and (D[j] == '(') and (D[j + 1] == '-'))
+        else if (((isdigit(D[j]) == 0) and (isalpha(D[j])==0)) and (D[j] == '(') and (D[j + 1] == '-'))
         {
             k = j;
             j += 2;
             L[i] = D.substr(k, 1);
             i++;
             k++;
-            while (isdigit(D[j]) != 0)
+            while ((isdigit(D[j]) != 0) or (isalpha(D[j]) != 0))
             {
                 j++;
             }
@@ -508,7 +538,7 @@ std::string* divide_into_elements(std::string D, int n) //dividing into operator
             k++;
             i++;
         }
-        else if ((isdigit(D[j]) == 0))
+        else if ((isdigit(D[j]) == 0) and (isalpha(D[j]) == 0))
         {
             L[i] = D.substr(k, j - k);
             k = j;
@@ -524,6 +554,24 @@ std::string* divide_into_elements(std::string D, int n) //dividing into operator
         L[i] = D.substr(k, j - k);
     }
     return L;
+}
+
+std::string* replace_variables(std::string* B, std::vector<std::pair<std::string, std::string>> pairs, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        if (isalpha(B[i][0]) != 0)
+        {
+            for (int j=0; j<pairs.size(); j++)
+            {
+                if (B[i] == pairs[j].first)
+                {
+                    B[i] = pairs[j].second;
+                }
+            }
+        }
+    }
+    return B;
 }
 
 std::string* sort_station(std::string* L, int* n_ext) //Shunting-Yard algorithm
