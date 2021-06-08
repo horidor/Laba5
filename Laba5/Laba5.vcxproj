@@ -139,7 +139,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Calculation.cpp" />
+    <ClCompile Include="Constructor.cpp" />
+    <ClCompile Include="FileRead.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="stack.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Calculation.h" />
+    <ClInclude Include="Constructor.h" />
+    <ClInclude Include="FileRead.h" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="Parser.h" />
+    <ClInclude Include="stack.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
