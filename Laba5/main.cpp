@@ -34,7 +34,7 @@ private:
     Node* left;
     Node* right;
     std::string inside;
-    bool flag;
+    int counter;
 
 public:
     Node()
@@ -43,7 +43,7 @@ public:
         right = nullptr;
         inside = '\0';
         std::cout << "i'm not here!" << std::endl;
-        flag = false;
+        counter = 0;
     }
     Node(std::string ins)
     {
@@ -51,7 +51,10 @@ public:
         right = nullptr;
         inside = ins;
         std::cout << "HERE I.. am?" << std::endl;
-        flag = false;
+        if ((ins.length() > 2) or (isdigit(ins[0]) != 0))
+            counter = 2;
+        else
+            counter = 0;
     }
     Node(Node* l, Node* r, std::string ins = "\0")
     {
@@ -59,18 +62,18 @@ public:
         right = r;
         inside = ins;
         std::cout << "HERE I AM" << std::endl;
-        flag = false;
+        counter = 0;
     }
 
     Node* get_left(){ return left; }
     Node* get_right() { return right; }
     std::string get_inside() { return inside; }
-    bool get_flag(){ return flag; }
+    int get_counter() { return counter; }
 
     void set_left(Node* l) { left = l; }
     void set_right(Node* r) { right = r; }
     void set_inside(std::string ins) { inside = ins; }
-    void set_flag(bool f) { flag = f; }
+    void set_counter(int a) { counter = a; }
 
 };
 
@@ -100,14 +103,15 @@ private:
                 {
                     nova->set_right(construct_tree(ins, nova->get_right()));
                 }
-                else if (nova->get_right()->get_flag() == false)
+                else if (nova->get_right()->get_counter() < 2)
                 {
                     nova->set_right(construct_tree(ins, nova->get_right()));
                 }
-                else if (nova->get_right()->get_flag() == true)
+                else if (nova->get_right()->get_counter() >= 2)
                 {
                     nova->set_left(construct_tree(ins, nova->get_left()));
                 }
+                nova->set_counter(nova->get_counter()-1);
             }
             else
             {
@@ -115,15 +119,15 @@ private:
                 {
                     nova->set_right(construct_tree(ins, nova->get_right()));
                 }
-                else if (((nova->get_right()->get_inside()).length() < 2) and (isdigit((nova->get_right()->get_inside())[0]) == 0) and ((nova->get_right()->get_flag()) == false))
+                else if (((nova->get_right()->get_inside()).length() < 2) and (isdigit((nova->get_right()->get_inside())[0]) == 0) and ((nova->get_right()->get_counter() < 2)))
                 {
                     nova->set_right(construct_tree(ins, nova->get_right()));
                 }
                 else
                 {
                     nova->set_left(construct_tree(ins, nova->get_left()));
-                    nova->set_flag(true);
                 }
+                nova->set_counter(nova->get_counter() + 1);
             }
             temp = nova;
         }
@@ -167,10 +171,52 @@ private:
     Node* root;
     double result;
 
+    double pow(double a, double b)
+    {
+        if (b > 0)
+        {
+            return a*pow(a, b - 1);
+        }
+        else
+        {
+            return 1;
+        }
+    }
+
     double calculate(Node *n)
     {
-        double a, b;
-        
+        double a, b, c;
+        if (n != nullptr)
+        {
+            if ((n->get_inside().length() < 2) and (isdigit(n->get_inside()[0]) == 0))
+            {
+                a = calculate(n->get_left());
+                b = calculate(n->get_right());
+                switch (n->get_inside()[0])
+                {
+                case '+':
+                    c = a + b;
+                    break;
+                case '-':
+                    c = a - b;
+                    break;
+                case '*':
+                    c = a * b;
+                    break;
+                case '/':
+                    c = a / b;
+                    break;
+                case '^':
+                    c = pow(a,b);
+                    break;
+                }
+            }
+            else
+            {
+                c = stod(n->get_inside());
+            }
+            return c;
+        }
     }
 
 public:
@@ -281,6 +327,10 @@ int main(int _argc, char* _argv[])
     Constructor constr;
     constr.construct(out, n);
     constr.output_tree(constr.get_root());
+    Calculation calculated(constr.get_root());
+    std::cout << std::endl;
+    std::cout << calculated.get_calculation() << std::endl;
+    
 }
 
 std::string console_interp(int argc, char* argv[]) //interpreting console input
@@ -565,14 +615,14 @@ int get_through(std::string* L, int n) //getting through recieved postfix form
     return ST.pop();
 }
 
-int pow(int a, int b) //recursive power function
-{
-    if (b > 0)
-    {
-        return a * pow(a, b - 1);
-    }
-    else
-    {
-        return 1;
-    }
-}
+//int pow(int a, int b) //recursive power function
+//{
+//    if (b > 0)
+//    {
+//        return a * pow(a, b - 1);
+//    }
+//    else
+//    {
+//        return 1;
+//    }
+//}
