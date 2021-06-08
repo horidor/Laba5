@@ -28,6 +28,118 @@ public:
     }
 };
 
+class Node
+{
+private:
+    Node* left;
+    Node* right;
+    std::string inside;
+
+public:
+    Node()
+    {
+        left = nullptr;
+        right = nullptr;
+        inside = '\0';
+        std::cout << "i'm not here!" << std::endl;
+    }
+    Node(std::string ins)
+    {
+        left = nullptr;
+        right = nullptr;
+        inside = ins;
+        std::cout << "HERE I.. am?" << std::endl;
+    }
+    Node(Node* l, Node* r, std::string ins = "\0")
+    {
+        left = l;
+        right = r;
+        inside = ins;
+        std::cout << "HERE I AM" << std::endl;
+    }
+
+    Node* get_left(){ return left; }
+    Node* get_right() { return right; }
+    virtual std::string get_inside() { return inside; }
+
+    void set_left(Node* l) { left = l; }
+    void set_right(Node* r) { right = r; }
+    virtual void set_inside(std::string ins) { inside = ins; }
+
+};
+
+class Node_d : public Node
+{
+private:
+    double inside;
+
+public:
+    Node_d()
+    {
+        double inside = 0;
+        std::cout << "i'm not here! d" << std::endl;
+    }
+    Node_d(double ins, Node* l=nullptr, Node* r=nullptr)
+        :Node(l, r)
+    {
+        inside = ins;
+        std::cout << "HERE I AM DOUBLED." << std::endl;
+    }
+
+    virtual void set_inside(double s) { inside = s; }
+    virtual double get_inside() const { return inside; }
+
+};
+
+class Node_c : public Node
+{
+private:
+    char inside;
+
+public:
+    Node_c()
+    {
+        inside = '\0';
+        std::cout << "i'm not here! c" << std::endl;
+    }
+
+    Node_c(char ins, Node* l=nullptr, Node* r=nullptr)
+        : Node(l, r)
+    {
+        inside = ins;
+        std::cout << "HERE I AM CHARRED." << std::endl;
+    }
+    
+    virtual void set_inside(char s) { inside = s; }
+    virtual char get_inside() const { return inside; }
+
+};
+
+class Constructor
+{
+private:
+    Node_c root;
+public:
+    Constructor(Node_c r)
+    {
+        root = r;
+    }
+
+    Node_c construct(std::string* out, int n)
+    {
+        Node* node1;
+        Node_c node_c1;
+        node1 = &node_c1;
+        Node* node2;
+        Node_c node_c2;
+        node2 = &node2;
+
+    }
+
+    Node* construct_recurs(std::string* out, int n, Node* upper)
+
+};
+
 std::string console_interp(int, char* []);
 int num_of_elements(std::string);
 std::string* divide_into_elements(std::string, int);
@@ -38,24 +150,29 @@ int pow(int, int);
 
 int main(int _argc, char* _argv[])
 {
-    //std::string infix = console_interp(_argc, _argv);
-    std::string infix;                            //debug testing
-    getline(std::cin, infix);
+    ////std::string infix = console_interp(_argc, _argv);
+    //std::string infix;                            //debug testing
+    //getline(std::cin, infix);
 
-    int n = num_of_elements(infix);
-    std::string* infix_alg = divide_into_elements(infix, n);
-    std::string* out_temp = sort_station(infix_alg, &n);
+    //int n = num_of_elements(infix);
+    //std::string* infix_alg = divide_into_elements(infix, n);
+    //std::string* out_temp = sort_station(infix_alg, &n);
 
-    std::string* out = new std::string[n];
-    out = out_temp;
-    for (int i = 0; i < n; i++)
-    {
-        std::cout << out[i] << " ";
-    }
-    std::cout << std::endl;
+    //std::string* out = new std::string[n];
+    //out = out_temp;
+    //for (int i = 0; i < n; i++)
+    //{
+    //    std::cout << out[i] << " ";
+    //}
+    //std::cout << std::endl;
 
-    int sum = get_through(out, n);
-    std::cout << "Result: " << sum << std::endl;
+    //int sum = get_through(out, n);
+    //std::cout << "Result: " << sum << std::endl;
+
+    //Node_c b('*');
+    //Constructor a(b);
+    //std::string out[2] = { "heh" , "mda" };
+    //a.construct(out, 7);
 }
 
 std::string console_interp(int argc, char* argv[]) //interpreting console input
