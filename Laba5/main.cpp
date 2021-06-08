@@ -4,6 +4,7 @@
 #include <vector>
 
 
+
 bool isOperator(std::string);
 bool isOperand(std::string);
 
@@ -90,6 +91,8 @@ private:
         Node* temp = new Node(ins);
         return temp;
     }
+
+    
 
     Node* construct_tree(std::string ins, Node* nova)
     {
@@ -238,9 +241,30 @@ public:
 class Parser
 {
 private:
+    std::string* parsed_statement;
+    int num_of_tokens;
 
+    void Copy(std::string*);
+
+    std::string* parse(std::string);
+
+    int num_of_elements(std::string);
+    void sort_station(std::string*);
+    void replace_variables(std::vector < std::pair < std::string, std::string>>);
+
+    char priority(char, char);
 public:
+    Parser(std::string statement, std::vector<std::pair<std::string, std::string>> variables)
+    {
+        num_of_tokens = num_of_elements(statement);
+        std::string* A = parse(statement);
+        sort_station(A);
+        replace_variables(variables);
+        delete[] A;
+    }
 
+    std::string* get_parsed_statement() { return parsed_statement; }
+    int get_num() { return num_of_tokens; }
 };
 class FileRead
 {
@@ -364,46 +388,46 @@ public:
 //    }
 //};
 
-std::string console_interp(int, char* []);
-int num_of_elements(std::string);
-std::string* divide_into_elements(std::string, int);
-std::string* replace_variables(std::string*, std::vector<std::pair<std::string, std::string>>, int);
-std::string* sort_station(std::string*, int*);
-char priority(char, char);
+//std::string console_interp(int, char* []);
+////int num_of_elements(std::string);
+//std::string* divide_into_elements(std::string, int);
+//std::string* replace_variables(std::string*, std::vector<std::pair<std::string, std::string>>, int);
+//std::string* sort_station(std::string*, int*);
+//char priority(char, char);
 //int get_through(std::string*, int);
 //int pow(int, int);
 
 int main(int _argc, char* _argv[])
 {
-    ////std::string infix = console_interp(_argc, _argv);
-    //std::string infix;                            //debug testing
-    //getline(std::cin, infix);
+    //////std::string infix = console_interp(_argc, _argv);
+    ////std::string infix;                            //debug testing
+    ////getline(std::cin, infix);
 
-    std::string infix;
-    FileRead fromfile("test.txt");
-    fromfile.output();
-    infix = fromfile.get_statement();
-    std::cout << isalpha('b') << std::endl;
+    //std::string infix;
+    //FileRead fromfile("test.txt");
+    //fromfile.output();
+    //infix = fromfile.get_statement();
+    //std::cout << isalpha('b') << std::endl;
 
-    int n = num_of_elements(infix);
-    std::string* infix_alg = divide_into_elements(infix, n);
-    infix_alg = replace_variables(infix_alg, fromfile.get_pairs(), n);
-    for (int i = 0; i < n; i++)
-    {
-        std::cout << infix_alg[i] << std::endl;
-    }
+    //int n = num_of_elements(infix);
+    //std::string* infix_alg = divide_into_elements(infix, n);
+    //infix_alg = replace_variables(infix_alg, fromfile.get_pairs(), n);
+    //for (int i = 0; i < n; i++)
+    //{
+    //    std::cout << infix_alg[i] << std::endl;
+    //}
 
-    std::string* out_temp = sort_station(infix_alg, &n);
+    //std::string* out_temp = sort_station(infix_alg, &n);
 
-    
+    //
 
-    std::string* out = new std::string[n];
-    out = out_temp;
-    for (int i = 0; i < n; i++)
-    {
-        std::cout << out[i] << " ";
-    }
-    std::cout << std::endl;
+    //std::string* out = new std::string[n];
+    //out = out_temp;
+    //for (int i = 0; i < n; i++)
+    //{
+    //    std::cout << out[i] << " ";
+    //}
+    //std::cout << std::endl;
 
     //int sum = get_through(out, n);
     //std::cout << "Result: " << sum << std::endl;
@@ -413,10 +437,12 @@ int main(int _argc, char* _argv[])
     //std::string out[2] = { "heh" , "mda" };
     //a.construct(out, 7);
 
-    
-        
+    std::string infix;
+    FileRead fromfile("test.txt");
+    fromfile.output();
+    Parser parced(fromfile.get_statement(), fromfile.get_pairs());    
     Constructor constr;
-    constr.construct(out, n);
+    constr.construct(parced.get_parsed_statement(), parced.get_num());
     constr.output_tree(constr.get_root());
     Calculation calculated(constr.get_root());
     std::cout << std::endl;
@@ -450,7 +476,7 @@ std::string console_interp(int argc, char* argv[]) //interpreting console input
     return L;
 }
 
-int num_of_elements(std::string S) //getting number of elements
+int Parser::num_of_elements(std::string S) //getting number of elements
 {
     int count_el = 0;
     bool flag = true;
@@ -490,9 +516,9 @@ int num_of_elements(std::string S) //getting number of elements
     return count_el;
 }
 
-std::string* divide_into_elements(std::string D, int n) //dividing into operators and operands
+std::string* Parser::parse(std::string D) //dividing into operators and operands
 {
-    std::string* L = new std::string[n];
+    std::string* L = new std::string[num_of_tokens];
     int i = 0;
     int k = 0;
     int j = 0;
@@ -549,34 +575,33 @@ std::string* divide_into_elements(std::string D, int n) //dividing into operator
         }
         j++;
     }
-    if (i < n)
+    if (i < num_of_tokens)
     {
         L[i] = D.substr(k, j - k);
     }
     return L;
 }
 
-std::string* replace_variables(std::string* B, std::vector<std::pair<std::string, std::string>> pairs, int n)
+void Parser::replace_variables(std::vector<std::pair<std::string, std::string>> pairs)
 {
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < num_of_tokens; i++)
     {
-        if (isalpha(B[i][0]) != 0)
+        if (isalpha(parsed_statement[i][0]) != 0)
         {
             for (int j=0; j<pairs.size(); j++)
             {
-                if (B[i] == pairs[j].first)
+                if (parsed_statement[i] == pairs[j].first)
                 {
-                    B[i] = pairs[j].second;
+                    parsed_statement[i] = pairs[j].second;
                 }
             }
         }
     }
-    return B;
 }
 
-std::string* sort_station(std::string* L, int* n_ext) //Shunting-Yard algorithm
+void Parser::sort_station(std::string* L) //Shunting-Yard algorithm
 {
-    int n = *n_ext;
+    int n = num_of_tokens;
     stack<char> ST;
     char l;
     std::string* out = new std::string[n];
@@ -626,7 +651,7 @@ std::string* sort_station(std::string* L, int* n_ext) //Shunting-Yard algorithm
                     l = ST.pop();
                     if (l == '(')
                     {
-                        *n_ext -= 2;
+                        num_of_tokens -= 2;
                         break;
                     }
                     out[i] = l;
@@ -641,10 +666,25 @@ std::string* sort_station(std::string* L, int* n_ext) //Shunting-Yard algorithm
         out[i] = ST.pop();
         i++;
     }
-    return out;
+    std::string* parsed_statement = new std::string[num_of_tokens];
+    for (int i = 0; i < n; i++)
+    {
+        std::cout << out[i] << std::endl;
+    }
+    Copy(out);
+
 }
 
-char priority(char a, char b) //priority check
+void Parser::Copy(std::string* out)
+{
+    parsed_statement = new std::string[num_of_tokens];
+    for (int i = 0; i < num_of_tokens; i++)
+    {
+        parsed_statement[i] = out[i];
+    }
+}
+
+char Parser::priority(char a, char b) //priority check
 {
     char a_n = ' ';
     char b_n = ' ';
