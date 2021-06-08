@@ -5,8 +5,6 @@
 
 
 
-bool isOperator(std::string);
-bool isOperand(std::string);
 
 template <class T>
 class stack //stack with templates
@@ -90,6 +88,21 @@ private:
     {
         Node* temp = new Node(ins);
         return temp;
+    }
+    bool isOperator(std::string ch)
+    {
+        if ((ch.length() < 2) and ((isdigit(ch[0]) == 0) and (isalpha(ch[0]) == 0)))
+            return true;
+        else
+            return false;
+    }
+
+    bool isOperand(std::string ch)
+    {
+        if ((ch.length() > 1) or (isdigit(ch[0]) != 0) or (isalpha(ch[0]) != 0))
+            return true;
+        else
+            return false;
     }
 
     
@@ -177,6 +190,23 @@ private:
     Node* root;
     double result;
 
+    bool isOperator(std::string ch)
+    {
+        if ((ch.length() < 2) and ((isdigit(ch[0]) == 0) and (isalpha(ch[0]) == 0)))
+            return true;
+        else
+            return false;
+    }
+
+    bool isOperand(std::string ch)
+    {
+        if ((ch.length() > 1) or (isdigit(ch[0]) != 0) or (isalpha(ch[0]) != 0))
+            return true;
+        else
+            return false;
+    }
+
+
     double pow(double a, double b)
     {
         if (b > 0)
@@ -250,7 +280,7 @@ private:
 
     int num_of_elements(std::string);
     void sort_station(std::string*);
-    void replace_variables(std::vector < std::pair < std::string, std::string>>);
+    void replace_variables(std::vector < std::pair < std::string, std::string>>, std::string*);
 
     char priority(char, char);
 public:
@@ -258,13 +288,19 @@ public:
     {
         num_of_tokens = num_of_elements(statement);
         std::string* A = parse(statement);
+        replace_variables(variables, A);
         sort_station(A);
-        replace_variables(variables);
+        
         delete[] A;
     }
 
     std::string* get_parsed_statement() { return parsed_statement; }
     int get_num() { return num_of_tokens; }
+
+    ~Parser()
+    {
+        delete[] parsed_statement;
+    }
 };
 class FileRead
 {
@@ -302,7 +338,6 @@ public:
         {
             getline(pFile, buffer);
             input_from_file.push_back(buffer);
-            std::cout << buffer << std::endl;
         }
         pFile.close();
         elnum = input_from_file.size();
@@ -330,141 +365,17 @@ public:
 
 };
 
-
-//class Node //допоміжний класс дерева
-//{
-//private:
-//    int inside;
-//    Node* left;
-//    Node* right;
-//public:
-//    Node()
-//    {
-//        inside = 0;
-//        left = NULL;
-//        right = NULL;
-//    }
-//    Node* new_node(int ins) //створення нової ноди
-//    {
-//        Node* temp = new Node;
-//        temp->inside = ins;
-//        temp->left = temp->right = NULL;
-//        return temp;
-//    }
-//
-//    Node* add_node(int ins, Node* tree) //додавання нової ноди
-//    {
-//        Node* temp;
-//        if (tree == NULL)
-//        {
-//            temp = new_node(ins);
-//        }
-//        else
-//        {
-//            if (ins < tree->inside)
-//            {
-//                tree->left = add_node(ins, tree->left);
-//            }
-//            else
-//            {
-//                tree->right = add_node(ins, tree->right);
-//            }
-//            temp = tree;
-//        }
-//        return temp;
-//    }
-//
-//    Node* get_left() { return left; } //геттери
-//    Node* get_right() { return right; }
-//    int get_inside() { return inside; }
-//
-//    ~Node() //рекурсивний деструктор
-//    {
-//        if (this != NULL)
-//        {
-//            delete right;
-//            delete left;
-//        }
-//    }
-//};
-
-//std::string console_interp(int, char* []);
-////int num_of_elements(std::string);
-//std::string* divide_into_elements(std::string, int);
-//std::string* replace_variables(std::string*, std::vector<std::pair<std::string, std::string>>, int);
-//std::string* sort_station(std::string*, int*);
-//char priority(char, char);
-//int get_through(std::string*, int);
-//int pow(int, int);
-
 int main(int _argc, char* _argv[])
 {
-    //////std::string infix = console_interp(_argc, _argv);
-    ////std::string infix;                            //debug testing
-    ////getline(std::cin, infix);
-
-    //std::string infix;
-    //FileRead fromfile("test.txt");
-    //fromfile.output();
-    //infix = fromfile.get_statement();
-    //std::cout << isalpha('b') << std::endl;
-
-    //int n = num_of_elements(infix);
-    //std::string* infix_alg = divide_into_elements(infix, n);
-    //infix_alg = replace_variables(infix_alg, fromfile.get_pairs(), n);
-    //for (int i = 0; i < n; i++)
-    //{
-    //    std::cout << infix_alg[i] << std::endl;
-    //}
-
-    //std::string* out_temp = sort_station(infix_alg, &n);
-
-    //
-
-    //std::string* out = new std::string[n];
-    //out = out_temp;
-    //for (int i = 0; i < n; i++)
-    //{
-    //    std::cout << out[i] << " ";
-    //}
-    //std::cout << std::endl;
-
-    //int sum = get_through(out, n);
-    //std::cout << "Result: " << sum << std::endl;
-
-    //Node_c b('*');
-    //Constructor a(b);
-    //std::string out[2] = { "heh" , "mda" };
-    //a.construct(out, 7);
-
     std::string infix;
     FileRead fromfile("test.txt");
-    fromfile.output();
     Parser parced(fromfile.get_statement(), fromfile.get_pairs());    
     Constructor constr;
     constr.construct(parced.get_parsed_statement(), parced.get_num());
-    constr.output_tree(constr.get_root());
     Calculation calculated(constr.get_root());
-    std::cout << std::endl;
-    std::cout << calculated.get_calculation() << std::endl;
-    
+    std::cout << "Result = " << calculated.get_calculation() << std::endl;
 }
 
-bool isOperator(std::string ch)
-{
-    if ((ch.length() < 2) and ((isdigit(ch[0]) == 0) and (isalpha(ch[0]) == 0)))
-        return true;
-    else
-        return false;
-}
-
-bool isOperand(std::string ch)
-{
-    if ((ch.length() > 1) or (isdigit(ch[0]) != 0) or (isalpha(ch[0]) != 0))
-        return true;
-    else
-        return false;
-}
 
 std::string console_interp(int argc, char* argv[]) //interpreting console input
 {
@@ -582,17 +493,17 @@ std::string* Parser::parse(std::string D) //dividing into operators and operands
     return L;
 }
 
-void Parser::replace_variables(std::vector<std::pair<std::string, std::string>> pairs)
+void Parser::replace_variables(std::vector<std::pair<std::string, std::string>> pairs, std::string* B)
 {
     for (int i = 0; i < num_of_tokens; i++)
     {
-        if (isalpha(parsed_statement[i][0]) != 0)
+        if (isalpha(B[i][0]) != 0)
         {
             for (int j=0; j<pairs.size(); j++)
             {
-                if (parsed_statement[i] == pairs[j].first)
+                if (B[i] == pairs[j].first)
                 {
-                    parsed_statement[i] = pairs[j].second;
+                    B[i] = pairs[j].second;
                 }
             }
         }
@@ -667,12 +578,8 @@ void Parser::sort_station(std::string* L) //Shunting-Yard algorithm
         i++;
     }
     std::string* parsed_statement = new std::string[num_of_tokens];
-    for (int i = 0; i < n; i++)
-    {
-        std::cout << out[i] << std::endl;
-    }
     Copy(out);
-
+    delete[] out;
 }
 
 void Parser::Copy(std::string* out)
