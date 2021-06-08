@@ -1,5 +1,11 @@
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <vector>
+
+
+bool isOperator(std::string);
+bool isOperand(std::string);
 
 template <class T>
 class stack //stack with templates
@@ -42,7 +48,6 @@ public:
         left = nullptr;
         right = nullptr;
         inside = '\0';
-        std::cout << "i'm not here!" << std::endl;
         counter = 0;
     }
     Node(std::string ins)
@@ -50,7 +55,6 @@ public:
         left = nullptr;
         right = nullptr;
         inside = ins;
-        std::cout << "HERE I.. am?" << std::endl;
         if ((ins.length() > 2) or (isdigit(ins[0]) != 0))
             counter = 2;
         else
@@ -61,7 +65,6 @@ public:
         left = l;
         right = r;
         inside = ins;
-        std::cout << "HERE I AM" << std::endl;
         counter = 0;
     }
 
@@ -97,7 +100,7 @@ private:
         }
         else
         {
-            if ((ins.length() < 2) and (isdigit(ins[0]) == 0))
+            if (isOperator(ins))
             {
                 if (nova->get_right() == nullptr)
                 {
@@ -119,7 +122,7 @@ private:
                 {
                     nova->set_right(construct_tree(ins, nova->get_right()));
                 }
-                else if (((nova->get_right()->get_inside()).length() < 2) and (isdigit((nova->get_right()->get_inside())[0]) == 0) and ((nova->get_right()->get_counter() < 2)))
+                else if ((isOperator(nova->get_right()->get_inside())) and ((nova->get_right()->get_counter() < 2)))
                 {
                     nova->set_right(construct_tree(ins, nova->get_right()));
                 }
@@ -188,7 +191,7 @@ private:
         double a, b, c;
         if (n != nullptr)
         {
-            if ((n->get_inside().length() < 2) and (isdigit(n->get_inside()[0]) == 0))
+            if (isOperator(n->get_inside()))
             {
                 a = calculate(n->get_left());
                 b = calculate(n->get_right());
@@ -230,6 +233,57 @@ public:
     {
         return result;
     }
+};
+
+class FileRead
+{
+private:
+    std::fstream pFile;
+    std::string buffer;
+    std::vector<std::string> input_from_file;
+    int elnum;
+
+    void parse()
+    {
+        for (int i = 0; i < elnum-1; i++)
+        {
+            buffer = input_from_file[i].substr(0, input_from_file[i].find(' ', 0));
+            buffer += input_from_file[i].substr(input_from_file[i].find_last_of(' '));
+            buffer.erase(buffer.length() - 1);
+            input_from_file[i] = buffer;
+        }
+        input_from_file[elnum - 1].erase(input_from_file[elnum - 1].length() - 1);
+    }
+public:
+    FileRead(std::string name)
+    {
+        pFile.open(name, std::ios::in);
+        int i = 0;
+        while (!pFile.eof())
+        {
+            getline(pFile, buffer);
+            input_from_file.push_back(buffer);
+            std::cout << buffer << std::endl;
+        }
+        pFile.close();
+        elnum = input_from_file.size();
+        parse();
+    }
+
+    void output()
+    {
+        for (int i = 0; i < elnum; i++)
+        {
+            std::cout << input_from_file[i] << std::endl;
+        }
+    }
+    
+
+
+    std::string get_statement() { return input_from_file[elnum - 1]; }
+
+
+
 };
 
 
@@ -295,14 +349,19 @@ int num_of_elements(std::string);
 std::string* divide_into_elements(std::string, int);
 std::string* sort_station(std::string*, int*);
 char priority(char, char);
-int get_through(std::string*, int);
-int pow(int, int);
+//int get_through(std::string*, int);
+//int pow(int, int);
 
 int main(int _argc, char* _argv[])
 {
     ////std::string infix = console_interp(_argc, _argv);
-    std::string infix;                            //debug testing
-    getline(std::cin, infix);
+    //std::string infix;                            //debug testing
+    //getline(std::cin, infix);
+
+    std::string infix;
+    FileRead fromfile("test.txt");
+    fromfile.output();
+    infix = fromfile.get_statement();
 
     int n = num_of_elements(infix);
     std::string* infix_alg = divide_into_elements(infix, n);
@@ -324,6 +383,8 @@ int main(int _argc, char* _argv[])
     //std::string out[2] = { "heh" , "mda" };
     //a.construct(out, 7);
 
+    
+        
     Constructor constr;
     constr.construct(out, n);
     constr.output_tree(constr.get_root());
@@ -331,6 +392,22 @@ int main(int _argc, char* _argv[])
     std::cout << std::endl;
     std::cout << calculated.get_calculation() << std::endl;
     
+}
+
+bool isOperator(std::string ch)
+{
+    if ((ch.length() < 2) and ((isdigit(ch[0]) == 0) and (isalpha(ch[0]) == 0)))
+        return true;
+    else
+        return false;
+}
+
+bool isOperand(std::string ch)
+{
+    if ((ch.length() > 1) or (isdigit(ch[0]) != 0) or (isalpha(ch[0]) != 0))
+        return true;
+    else
+        return false;
 }
 
 std::string console_interp(int argc, char* argv[]) //interpreting console input
@@ -395,13 +472,13 @@ std::string* divide_into_elements(std::string D, int n) //dividing into operator
     }
     while (j < D.length())
     {
-        if ((isdigit(D[j]) == 0) and (k - j == 0) and (isdigit(D[j + 1]) != 0))
+        if (((isdigit(D[j]) == 0) and (isalpha(D[j]) == 0)) and (k - j == 0) and (isdigit(D[j + 1]) != 0))
         {
             L[i] = D.substr(j, 1);
             k++;
             i++;
         }
-        else if ((isdigit(D[j]) == 0) and (D[j] == '(') and (D[j + 1] == '-'))
+        else if ((((isdigit(D[j]) == 0) and (isalpha(D[j]))==0)) and (D[j] == '(') and (D[j + 1] == '-'))
         {
             k = j;
             j += 2;
@@ -549,71 +626,71 @@ char priority(char a, char b) //priority check
     }
 }
 
-int get_through(std::string* L, int n) //getting through recieved postfix form
-{
-    stack<int> ST;
-    for (int i = 0; i < n; i++)
-    {
-        if ((L[i].length() > 1) or ((isdigit(L[i][0])) != 0))
-        {
-            ST.push(stoi(L[i]));
-        }
-        else
-        {
-            switch (L[i][0])
-            {
-            case '+':
-            {
-                int A, B;
-                A = ST.pop();
-                B = ST.pop();
-                ST.push(B + A);
-                break;
-            }
-            case '-':
-            {
-                int A, B;
-                A = ST.pop();
-                B = ST.pop();
-                ST.push(B - A);
-                break;
-            }
-            case '*':
-            {
-                int A, B;
-                A = ST.pop();
-                B = ST.pop();
-                ST.push(B * A);
-                break;
-            }
-            case '/':
-            {
-                int A, B;
-                A = ST.pop();
-                B = ST.pop();
-                ST.push(B / A);
-                break;
-            }
-            case '^':
-            {
-                int A, B;
-                A = ST.pop();
-                B = ST.pop();
-                if (A >= 0)
-                {
-                    ST.push(pow(B, A));
-                }
-                else
-                {
-                    ST.push(1 / pow(B, A));
-                }
-                break;
-            }
-            }
-        }
-    }
-    return ST.pop();
-}
+//int get_through(std::string* L, int n) //getting through recieved postfix form
+//{
+//    stack<int> ST;
+//    for (int i = 0; i < n; i++)
+//    {
+//        if ((L[i].length() > 1) or ((isdigit(L[i][0])) != 0))
+//        {
+//            ST.push(stoi(L[i]));
+//        }
+//        else
+//        {
+//            switch (L[i][0])
+//            {
+//            case '+':
+//            {
+//                int A, B;
+//                A = ST.pop();
+//                B = ST.pop();
+//                ST.push(B + A);
+//                break;
+//            }
+//            case '-':
+//            {
+//                int A, B;
+//                A = ST.pop();
+//                B = ST.pop();
+//                ST.push(B - A);
+//                break;
+//            }
+//            case '*':
+//            {
+//                int A, B;
+//                A = ST.pop();
+//                B = ST.pop();
+//                ST.push(B * A);
+//                break;
+//            }
+//            case '/':
+//            {
+//                int A, B;
+//                A = ST.pop();
+//                B = ST.pop();
+//                ST.push(B / A);
+//                break;
+//            }
+//            case '^':
+//            {
+//                int A, B;
+//                A = ST.pop();
+//                B = ST.pop();
+//                if (A >= 0)
+//                {
+//                    ST.push(pow(B, A));
+//                }
+//                else
+//                {
+//                    ST.push(1 / pow(B, A));
+//                }
+//                break;
+//            }
+//            }
+//        }
+//    }
+//    return ST.pop();
+//}
 
 //int pow(int a, int b) //recursive power function
 //{

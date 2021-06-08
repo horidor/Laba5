@@ -1,7 +1,7 @@
 ﻿  main.cpp
-C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(350,23): warning C4018: '<': signed/unsigned mismatch
-C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(396,14): warning C4018: '<': signed/unsigned mismatch
-C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(425,19): warning C4018: '>=': signed/unsigned mismatch
-C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(460,10): warning C4101: 'flag': unreferenced local variable
-C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(220): warning C4715: 'Calculation::calculate': not all control paths return a value
+C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(427,23): warning C4018: '<': signed/unsigned mismatch
+C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(473,14): warning C4018: '<': signed/unsigned mismatch
+C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(502,19): warning C4018: '>=': signed/unsigned mismatch
+C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(537,10): warning C4101: 'flag': unreferenced local variable
+C:\labs\Laboratorna5OP\Laba5\Laba5\main.cpp(223): warning C4715: 'Calculation::calculate': not all control paths return a value
   Laba5.vcxproj -> C:\labs\Laboratorna5OP\Laba5\Debug\Laba5.exe
