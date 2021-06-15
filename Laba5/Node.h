@@ -23,7 +23,7 @@ public:
         left = nullptr;
         right = nullptr;
         inside = ins;
-        if ((ins.length() > 2) or (isdigit(ins[0]) != 0))
+        if ((ins.length() > 2) or (isdigit(ins[0]) != 0) or (isalpha(ins[0]) != 0))
             counter = 2;
         else
             counter = 0;

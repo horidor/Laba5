@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <iostream>
 #include "stack.h"
 
 class Parser
@@ -13,9 +14,12 @@ private:
 
     std::string* parse(std::string);
 
+    bool isOperand(std::string ch);
+
     int num_of_elements(std::string);
     void sort_station(std::string*);
-    void replace_variables(std::vector < std::pair < std::string, std::string>>, std::string*);
+
+    void output_parsed();
 
     char priority(char, char);
 public:
@@ -23,9 +27,9 @@ public:
     {
         num_of_tokens = num_of_elements(statement);
         std::string* A = parse(statement);
-        replace_variables(variables, A);
-        sort_station(A);
 
+        sort_station(A);
+        //output_parsed();
         delete[] A;
     }
 

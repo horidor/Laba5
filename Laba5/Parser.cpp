@@ -1,4 +1,13 @@
 #include "Parser.h"
+#include <iostream>
+
+bool Parser::isOperand(std::string ch)
+{
+    if ((ch.length() > 1) or (isdigit(ch[0]) != 0) or (isalpha(ch[0]) != 0))
+        return true;
+    else
+        return false;
+}
 
 int Parser::num_of_elements(std::string S) //getting number of elements from the file
 {
@@ -88,7 +97,7 @@ std::string* Parser::parse(std::string D) //dividing into operators and operands
             k++;
             i++;
         }
-        else if ((isdigit(D[j]) == 0) and (isalpha(D[j]) == 0))
+        else if ((isdigit(D[j]) == 0) and (isalpha(D[j]) == 0) and (D[j]!='.'))
         {
             L[i] = D.substr(k, j - k);
             k = j;
@@ -106,23 +115,6 @@ std::string* Parser::parse(std::string D) //dividing into operators and operands
     return L;
 }
 
-void Parser::replace_variables(std::vector<std::pair<std::string, std::string>> pairs, std::string* B) //replacing variables with numbers
-{
-    for (int i = 0; i < num_of_tokens; i++)
-    {
-        if (isalpha(B[i][0]) != 0)
-        {
-            for (int j = 0; j < pairs.size(); j++)
-            {
-                if (B[i] == pairs[j].first)
-                {
-                    B[i] = pairs[j].second;
-                }
-            }
-        }
-    }
-}
-
 void Parser::sort_station(std::string* L) //Shunting-Yard algorithm
 {
     int n = num_of_tokens;
@@ -134,7 +126,7 @@ void Parser::sort_station(std::string* L) //Shunting-Yard algorithm
     bool flag;
     while (j < n)
     {
-        if ((L[j].length() > 1) or (isdigit(L[j][0]) != 0))
+        if (isOperand(L[j]))
         {
             out[i] = L[j];
             i++;
@@ -193,6 +185,15 @@ void Parser::sort_station(std::string* L) //Shunting-Yard algorithm
     std::string* parsed_statement = new std::string[num_of_tokens];
     Copy(out);
     delete[] out;
+}
+
+void Parser::output_parsed()
+{
+    for (int i = 0; i < num_of_tokens; i++)
+    {
+        std::cout << parsed_statement[i] << std::endl;
+    }
+    std::cout << std::endl;
 }
 
 void Parser::Copy(std::string* out)

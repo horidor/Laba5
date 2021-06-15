@@ -1,4 +1,5 @@
 #include "Constructor.h"
+#include <iostream>
 
 
 bool Constructor::isOperator(std::string ch)
@@ -76,4 +77,15 @@ Node* Constructor::construct_tree(std::string ins, Node* nova)
         temp = nova;
     }
     return temp;
+}
+
+void Constructor::print_Tree(Node* p, int level)
+{
+    if (p)
+    {
+        print_Tree(p->get_left(), level + 1);
+        for (int i = 0; i < level; i++) std::cout << "   ";
+        std::cout << p->get_inside() << std::endl;
+        print_Tree(p->get_right(), level + 1);
+    }
 }

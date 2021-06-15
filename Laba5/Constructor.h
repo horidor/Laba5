@@ -16,6 +16,7 @@ private:
 
 
     Node* construct_tree(std::string, Node*);
+    void print_Tree(Node* p, int level);
 public:
     Constructor()
     {
@@ -29,6 +30,7 @@ public:
         {
             root = construct_tree(out[i], root);
         }
+        //print_Tree(root, 1);
         return root;
     }
 
